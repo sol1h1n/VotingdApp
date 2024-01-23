@@ -1,0 +1,37 @@
+[
+  {
+    "id": 0,
+    "name": "Fikri",
+    "picture": "images/scottish-terrier.jpeg",
+    "age": 30,
+    "breed": "Malay",
+    "location": "Johor, Malaysia"
+  },
+  {
+    "id": 1,
+    "name": "Wan",
+    "picture": "images/scottish-terrier.jpeg",
+    "age": 33,
+    "breed": "Malay",
+    "location": "KL, Malaysia"
+  },
+  {
+    "id": 2,
+    "name": "Solihin",
+    "picture": "images/french-bulldog.jpeg",
+    "age": 29,
+    "breed": "French",
+    "location": "Penang, Malaysia"
+  },
+  {
+    "id": 3,
+    "name": "Kamarul",
+    "picture": "images/boxer.jpeg",
+    "age": 88,
+    "breed": "Malay",
+    "location": "Perlis, Malaysia"
+  }
+
+
+
+]
