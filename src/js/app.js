@@ -72,28 +72,25 @@ web3 = new Web3(App.web3Provider);
 
   markVoted: function() {
     var VotingInstance;
-
+  
     App.contracts.Voting.deployed().then(function(instance) {
-        VotingInstance = instance;
-
-        // Get voters and vote counts
-        return Promise.all([VotingInstance.getVoters.call(), VotingInstance.getVoteCounts.call()]);
-    }).then(function([Voters, voteCounts]) {
-        for (i = 0; i < Voters.length; i++) {
-            if (Voters[i] !== '0x0000000000000000000000000000000000000000') {
-                $('.panel-Votings').eq(i).find('button').text('Voted').attr('disabled', true);
-            }
-
-            // Check if voteCount[i] is defined before accessing it
-            var voteCount = (typeof voteCounts[i] !== 'undefined') ? voteCounts[i].toNumber() : 0;
-
-            // Update vote count for each candidate
-            $('.panel-Votings').eq(i).find('.vote-count').text('Votes: ' + voteCount);
-        }
+      VotingInstance = instance;
+  
+      // Get vote counts only
+      return VotingInstance.getVoteCounts.call();
+    }).then(function(voteCounts) {
+      for (i = 0; i < voteCounts.length; i++) {
+        // Check if voteCount[i] is defined before accessing it
+        var voteCount = (typeof voteCounts[i] !== 'undefined') ? voteCounts[i].toNumber() : 0;
+  
+        // Update vote count for each candidate
+        $('.panel-Votings').eq(i).find('.vote-count').text('Votes: ' + voteCount);
+      }
     }).catch(function(err) {
-        console.log(err.message);
+      console.log(err.message);
     });
-},
+  },
+  
 
 // New function to display total vote count for a candidate
 displayVoteCount: function(VotingsId) {
@@ -129,20 +126,13 @@ handleVote: function(event) {
     App.contracts.Voting.deployed().then(function(instance) {
       VotingInstance = instance;
 
-      // Check if the user has already voted
-      return VotingInstance.hasVoted.call(account);
-    }).then(function(hasAlreadyVoted) {
-      if (hasAlreadyVoted) {
-        alert("You have already voted.");
-      } else {
-        // Execute Vote as a transaction by sending account
-        return VotingInstance.Vote(VotingsId, { from: account });
-      }
+      // Execute Vote as a transaction by sending account
+      return VotingInstance.vote(VotingsId, { from: account });
     }).then(function(result) {
       console.log("Vote successful. Updating vote count...");
       App.markVoted(); // Call markVoted after the vote is executed
     }).catch(function(err) {
-      console.log(err.message);
+      console.error(err.message);
     });
   });
 }

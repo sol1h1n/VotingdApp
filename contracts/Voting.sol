@@ -2,34 +2,27 @@
 pragma solidity >=0.5.0 <0.9.0;
 
 contract Voting {
-    address[4] public Voters;
-    mapping(address => bool) public hasVoted;
-    mapping(uint => mapping(address => bool)) public hasVotedForCandidate;
-    mapping(uint => uint) public voteCount;
+    mapping(address => bool) public hasVoted; // Tracks whether an address has voted
+    mapping(uint => uint) public voteCount;   // Tracks the number of votes for each candidate
+    uint public constant NUM_CANDIDATES = 4;  // Total number of candidates
 
-    // Vote function
-    function Vote(uint VotingsId) public returns (uint) {
-        require(VotingsId >= 0 && VotingsId <= 3);
-        require(!hasVoted[msg.sender], "You have already voted.");
+    event Voted(address indexed voter, uint indexed candidateId); // Event emitted after a vote
 
-        Voters[VotingsId] = msg.sender;
-        hasVoted[msg.sender] = true;
-        voteCount[VotingsId]++; // Increment the vote count for the selected candidate
+    // Function to cast a vote
+    function vote(uint candidateId) public {
+        require(candidateId < NUM_CANDIDATES, "Invalid candidate ID."); // Check for valid candidate
+        require(!hasVoted[msg.sender], "You have already voted."); // Ensure the voter hasn't voted before
 
-        return VotingsId;
+        hasVoted[msg.sender] = true; // Mark the voter as having voted
+        voteCount[candidateId]++; // Increment the vote count for the candidate
+
+        emit Voted(msg.sender, candidateId); // Emit the voting event
     }
 
-    // Retrieving the Voters
-    function getVoters() public view returns (address[4] memory) {
-        return Voters;
-    }
-
-    // Retrieve the total vote count for a specific candidate
-    function getVoteCounts() public view returns (uint[4] memory) {
-        uint[4] memory counts;
-        for (uint i = 0; i < 4; i++) {
+    // Function to retrieve the total vote count for each candidate
+    function getVoteCounts() public view returns (uint[NUM_CANDIDATES] memory counts) {
+        for (uint i = 0; i < NUM_CANDIDATES; i++) {
             counts[i] = voteCount[i];
         }
-        return counts;
     }
 }
